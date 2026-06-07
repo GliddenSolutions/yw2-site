@@ -392,7 +392,7 @@
     });
 
     // Submit handler
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       if (!validateForm()) return;
@@ -402,14 +402,34 @@
       // SECURE: textContent — no innerHTML
       submitBtn.textContent = 'Sending…';
 
-      // Simulate async submission
+      try {
+        // Collect form data
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
 
-      setTimeout(function () {
-        // Show success
-        form.setAttribute('hidden', '');
-        successEl.removeAttribute('hidden');
-        successEl.focus();
-      }, 1200);
+        // Send to AWS Lambda API
+        const response = await fetch('https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com/default/yw2-contact-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          // Show success
+          form.setAttribute('hidden', '');
+          successEl.removeAttribute('hidden');
+          successEl.focus();
+        } else {
+          throw new Error('Server returned an error');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('There was an error sending your request. Please try again later.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Get My Free SEO Audit';
+      }
     });
   }());
 
