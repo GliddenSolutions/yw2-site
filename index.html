@@ -21,12 +21,12 @@
   <!-- CSP via meta tag (supplement to server-side headers) -->
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self';
-             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.googletagmanager.com;
              font-src https://fonts.gstatic.com;
              media-src 'self' https://d1td79ts94gosl.cloudfront.net;
              script-src 'self' https://www.googletagmanager.com;
-             img-src 'self' data: https://www.googletagmanager.com;
-             connect-src 'self' https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com https://www.googletagmanager.com;
+             img-src 'self' data: https://www.googletagmanager.com https://fonts.gstatic.com;
+             connect-src 'self' https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com;
              object-src 'none';
              base-uri 'self';" />
 
