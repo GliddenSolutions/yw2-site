@@ -19,16 +19,17 @@
   <meta property="og:type" content="website" />
 
   <!-- CSP via meta tag (supplement to server-side headers) -->
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self';
-             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.googletagmanager.com;
-             font-src https://fonts.gstatic.com;
-             media-src 'self' https://d1td79ts94gosl.cloudfront.net;
-             script-src 'self' https://www.googletagmanager.com;
-             img-src 'self' data: https://www.googletagmanager.com https://fonts.gstatic.com;
-             connect-src 'self' https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com;
-             object-src 'none';
-             base-uri 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.googletagmanager.com;
+    font-src 'self' https://fonts.gstatic.com;
+    media-src 'self' https://d1td79ts94gosl.cloudfront.net;
+    script-src 'self' https://www.googletagmanager.com;
+    img-src 'self' data: https://www.googletagmanager.com https://fonts.gstatic.com;
+    connect-src 'self' https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com;
+    object-src 'none';
+    base-uri 'self';
+  ">
 
   <title>YW2 — Your Web Your Way | Local SEO & AI Search Marketing</title>
   <link rel="icon" href="/logo32_32.svg" type="image/svg+xml">
