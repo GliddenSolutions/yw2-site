@@ -548,4 +548,62 @@
     });
   }());
 
+  // 11. BACKGROUND VIDEO SWITCH - if you're reading this, its because I put a funny video in the beginning
+  // congrats you found why that guy only shows up once
+  (function initBackgroundVideo() {
+    const videoEl = document.getElementById('bg-video');
+    if (!videoEl) return;
+
+    const INTRO_END = 5.05;
+    const STORAGE_KEY = 'bgVideoIntroPlayed';
+
+    function hasSeenIntro() {
+      try {
+        return localStorage.getItem(STORAGE_KEY) === 'true';
+      } catch {
+        return false;
+      }
+    }
+
+    function markIntroAsSeen() {
+      try {
+        localStorage.setItem(STORAGE_KEY, 'true');
+      } catch {
+        // localStorage may be unavailable in some privacy modes.
+      }
+    }
+
+    // On later visits, skip video-1-funny immediately.
+    videoEl.addEventListener('loadedmetadata', function () {
+      if (hasSeenIntro()) {
+        videoEl.currentTime = INTRO_END;
+      }
+    }, { once: true });
+
+    // Mark the intro as seen as soon as it has actually finished,
+    // rather than waiting for the entire combined video to finish.
+    function trackIntroCompletion() {
+      if (!hasSeenIntro() && videoEl.currentTime >= INTRO_END) {
+        markIntroAsSeen();
+        videoEl.removeEventListener('timeupdate', trackIntroCompletion);
+      }
+    }
+
+    videoEl.addEventListener('timeupdate', trackIntroCompletion);
+
+    // After the full video ends, loop only the section after video-1-funny.
+    videoEl.addEventListener('ended', function () {
+      videoEl.currentTime = INTRO_END;
+
+      const playPromise = videoEl.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(function (error) {
+          console.warn('Background video could not restart:', error);
+        });
+      }
+    });
+  }());
+
+
 }());
