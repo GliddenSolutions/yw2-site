@@ -554,10 +554,11 @@
     const videoEl = document.getElementById('bg-video');
     if (!videoEl) return;
 
-    const INTRO_END = 5.05;
-    const STORAGE_KEY = 'bgVideoIntroPlayed';
+    const SKIP_START = 5.033;
+    const SKIP_END = 10.067;
+    const STORAGE_KEY = 'bgVideoFunnyClipPlayed';
 
-    function hasSeenIntro() {
+    function hasSeenFunnyClip() {
       try {
         return localStorage.getItem(STORAGE_KEY) === 'true';
       } catch {
@@ -565,43 +566,38 @@
       }
     }
 
-    function markIntroAsSeen() {
+    function markFunnyClipSeen() {
       try {
         localStorage.setItem(STORAGE_KEY, 'true');
       } catch {
-        // localStorage may be unavailable in some privacy modes.
+        // localStorage may be unavailable.
       }
     }
 
-    // On later visits, skip video-1-funny immediately.
-    videoEl.addEventListener('loadedmetadata', function () {
-      if (hasSeenIntro()) {
-        videoEl.currentTime = INTRO_END;
+    videoEl.addEventListener('timeupdate', function () {
+      if (!hasSeenFunnyClip()) {
+        if (videoEl.currentTime >= SKIP_END) {
+          markFunnyClipSeen();
+        }
+
+        return;
       }
-    }, { once: true });
 
-    // Mark the intro as seen as soon as it has actually finished,
-    // rather than waiting for the entire combined video to finish.
-    function trackIntroCompletion() {
-      if (!hasSeenIntro() && videoEl.currentTime >= INTRO_END) {
-        markIntroAsSeen();
-        videoEl.removeEventListener('timeupdate', trackIntroCompletion);
+      // Skip the second clip on later loops and visits.
+      if (
+        videoEl.currentTime >= SKIP_START &&
+        videoEl.currentTime < SKIP_END
+      ) {
+        videoEl.currentTime = SKIP_END;
       }
-    }
+    });
 
-    videoEl.addEventListener('timeupdate', trackIntroCompletion);
-
-    // After the full video ends, loop only the section after video-1-funny.
     videoEl.addEventListener('ended', function () {
-      videoEl.currentTime = INTRO_END;
+      videoEl.currentTime = 0;
 
-      const playPromise = videoEl.play();
-
-      if (playPromise !== undefined) {
-        playPromise.catch(function (error) {
-          console.warn('Background video could not restart:', error);
-        });
-      }
+      videoEl.play().catch(function (error) {
+        console.warn('Background video could not restart:', error);
+      });
     });
   }());
 
