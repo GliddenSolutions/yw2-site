@@ -203,6 +203,11 @@ input, select, textarea { font-family: inherit; }
 .btn--lg  { padding: var(--space-4) var(--space-8); font-size: var(--font-size-md); }
 .btn--full { width: 100%; }
 
+#form-reset-btn {
+  margin-top: 1.5rem;
+  padding: var(--space-3) var(--space-6);
+}
+
 /* ============================================================
    4. SECTION ATOMS (tag, title, sub)
    ============================================================ */
