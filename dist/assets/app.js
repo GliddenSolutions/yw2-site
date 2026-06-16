@@ -554,11 +554,15 @@
     const videoEl = document.getElementById('bg-video');
     if (!videoEl) return;
 
-    const SKIP_START = 5.033;
-    const SKIP_END = 10.067;
-    const STORAGE_KEY = 'bgVideoFunnyClipPlayed';
+    const baseUrl = videoEl.querySelector('source') ? videoEl.querySelector('source').src : videoEl.src;
+    if (!baseUrl) return;
 
-    function hasSeenFunnyClip() {
+    const STORAGE_KEY = 'bgVideoFunnyClipPlayed';
+    const introSrc = baseUrl.replace(/hero_video(\.\w+)$/, 'hero_video_$1');
+    const loopSrc  = baseUrl;
+    if (!introSrc || !loopSrc) return;
+
+    function hasSeenIntro() {
       try {
         return localStorage.getItem(STORAGE_KEY) === 'true';
       } catch {
@@ -566,38 +570,40 @@
       }
     }
 
-    function markFunnyClipSeen() {
+    function markIntroSeen() {
       try {
         localStorage.setItem(STORAGE_KEY, 'true');
       } catch {
-        // localStorage may be unavailable.
+        // Ignore storage failures.
       }
     }
 
-    videoEl.addEventListener('timeupdate', function () {
-      if (!hasSeenFunnyClip()) {
-        if (videoEl.currentTime >= SKIP_END) {
-          markFunnyClipSeen();
-        }
-
-        return;
-      }
-
-      // Skip the second clip on later loops and visits.
-      if (
-        videoEl.currentTime >= SKIP_START &&
-        videoEl.currentTime < SKIP_END
-      ) {
-        videoEl.currentTime = SKIP_END;
-      }
-    });
-
-    videoEl.addEventListener('ended', function () {
-      videoEl.currentTime = 0;
+    function playMainLoop() {
+      videoEl.loop = true;
+      videoEl.src = loopSrc;
+      videoEl.load();
 
       videoEl.play().catch(function (error) {
-        console.warn('Background video could not restart:', error);
+        console.warn('Main background video could not play:', error);
       });
+    }
+
+    if (hasSeenIntro()) {
+      playMainLoop();
+      return;
+    }
+
+    videoEl.loop = false;
+    videoEl.src = introSrc;
+    videoEl.load();
+
+    videoEl.addEventListener('ended', function handleIntroEnded() {
+      markIntroSeen();
+      playMainLoop();
+    }, { once: true });
+
+    videoEl.play().catch(function (error) {
+      console.warn('Intro background video could not play:', error);
     });
   }());
 
