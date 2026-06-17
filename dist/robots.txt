@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-# Block internal or non-public folders if they exist
-# Disallow: /example/
-
-Sitemap: https://yw2llc.com/sitemap.xml
