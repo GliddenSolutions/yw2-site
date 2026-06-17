@@ -1,0 +1,7 @@
+# Personal
+.DS_Store
+__trash
+
+
+# Node
+node_modules
